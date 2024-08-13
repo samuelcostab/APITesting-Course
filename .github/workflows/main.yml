@@ -1,0 +1,44 @@
+name: "Reviewer lottery"
+
+on:
+  pull_request:
+    types: [opened, ready_for_review, reopened]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: uesteibar/reviewer-lottery@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+      
+    - name: Set up Python
+      if: always()
+      uses: actions/setup-python@v3
+      with:
+          python-version: "3.10"
+    
+    - name: Dependencies Installation
+      run: |
+          pip install -r requirements.txt
+    
+    - name: Format reviewer list
+      id: format_reviewers
+      run: |
+          reviewers=$(jq -r '.requested_reviewers[]?.login' <<< "${{ toJson(github.event.pull_request.requested_reviewers) }}")
+          if [ -z "$reviewers" ]; then
+            reviewers="(nenhum revisor designado)"
+          fi
+          echo "reviewers=$reviewers" >> $GITHUB_ENV
+      
+    - name: Get Slack Users and Send Message
+      if: always()
+      env:
+          SLACK_WEBHOOK_URL: https://hooks.slack.com/services/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
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_REVIEWERS: ${{ env.reviewers }}
+      run: |
+            python scripts/ci/slack_service.py
