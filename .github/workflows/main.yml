@@ -42,4 +42,4 @@ jobs:
           PR_URL: ${{ github.event.pull_request.html_url }}
           PR_REVIEWERS: ${{ env.reviewers }}
       run: |
-            python scripts/ci/slack_service.py
+            python slack_service.py
