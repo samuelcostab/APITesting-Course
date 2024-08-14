@@ -1,0 +1,5 @@
+groups:
+  - name: qas
+    reviewers: 1
+    usernames:
+      - samuelcostab # Samuel Brito Da Costa
