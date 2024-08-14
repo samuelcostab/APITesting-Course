@@ -36,7 +36,7 @@ jobs:
     - name: Get Slack Users and Send Message
       if: always()
       env:
-          SLACK_WEBHOOK_URL: https://hooks.slack.com/services/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
+          SLACK_WEBHOOK_URL: https://hooks.slack.com/services/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
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_URL: ${{ github.event.pull_request.html_url }}
